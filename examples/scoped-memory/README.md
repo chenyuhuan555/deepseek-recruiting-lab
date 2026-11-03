@@ -11,6 +11,7 @@ python -m unittest discover -s examples/scoped-memory -p 'test_*.py' -v
 - [core.py](core.py)：不可变岗位快照、经审核的变更应用、记忆范围与有效期筛选。
 - [test_core.py](test_core.py)：模拟客户补充要求、修改或取消条件，以及错误范围和过期反馈。
 - [完整实现思路](../../docs/scoped-memory-implementation.md)：数据库事务、人工审核、证据卡和模型接入边界。
+- [交互实验室](web/README.md)：在浏览器中体验规则映射、岗位变更、反馈范围和证据复核。
 
 2026-11-03 在 Python 3.14 的本地环境运行：10 项测试通过。首次运行时实现尚未存在，测试导入失败；补充实现后再次运行通过。
 

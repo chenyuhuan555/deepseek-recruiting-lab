@@ -25,10 +25,13 @@
 | [LinkedIn Hiring Assistant 2 研究](docs/linkedin-hiring-assistant-2-study.md) | 官方能力、记忆与反馈机制，以及业务取舍 |
 | [实现设计与核心代码思路](docs/scoped-memory-implementation.md) | 数据边界、版本事务、反馈范围、证据卡与模型接入 |
 | [最小代码示例](examples/scoped-memory/README.md) | 用纯 Python 验证岗位修订与记忆过滤，10 项测试通过 |
+| [招聘记忆实验室](examples/scoped-memory/web/README.md) | 可交互前端：需求变更、范围过滤和证据复核，含本地运行说明 |
 
 普通会话中先粘贴提示模板，再输入案例的第一轮需求。拿到回答后补充第二轮信息，用岗位档案模板检查它有没有正确修订。模板本身不会自动写入或保存业务数据。
 
 2026-11-03 新增的规则示例在内存中运行，尚未接入 DeepSeek 面板、数据库或真实招聘流程；它验证程序规则，不证明模型或业务效果。
+
+同日补充浏览器交互演示，以 JavaScript 映射 Python 规则。可以亲自体验版本冲突、记忆过滤与证据复核；不调用模型，刷新即清空虚构实验数据。
 
 ## 第一轮的业务目标
 

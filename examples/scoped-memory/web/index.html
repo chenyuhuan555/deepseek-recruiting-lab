@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>招聘记忆实验室 · Recruiting Fieldnotes</title>
+  <meta name="description" content="动手探索岗位版本、反馈范围与证据复核。独立规则演示，全部使用虚构数据。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%231d493e'/%3E%3Cpath d='M12 29V11h16M12 20h13' stroke='%23f7f6f2' fill='none' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css"><script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="#"><span class="brand-icon">f.</span> FIELDNOTES <span class="brand-divider">/</span><span class="brand-sub">RECRUITING LAB</span></a><span class="demo-label"><span></span> 虚构数据 · 交互实验</span></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">EXPERIMENT 003 / CONTEXT & MEMORY</p><h1>招聘记忆实验室<span class="title-dot">.</span></h1><p class="lead">需求会变，偏好有范围，判断要有出处。动手试一次。</p></div><button class="quiet" id="reset">↺ 重置实验</button></section>
+    <section class="contextbar" aria-label="当前实验上下文"><div class="project-select"><span class="context-icon">▣</span><div><label for="project">当前项目</label><select id="project"><option value="job-a">禾序 · AI 产品经理</option><option value="job-b">向野 · 招聘产品经理</option></select></div></div><div class="context-meta"><span>当前岗位 <strong id="job-version">v1</strong></span><span class="context-scope">每个项目独立保存本页修改</span></div></section>
+    <nav class="tabs" aria-label="实验步骤"><button class="tab active" data-tab="revision" aria-current="page"><span>01</span> 岗位修订</button><button class="tab" data-tab="memory"><span>02</span> 反馈范围</button><button class="tab" data-tab="evidence"><span>03</span> 证据复核</button></nav>
+    <div id="workspace"></div>
+    <p id="notice" class="notice" role="status" aria-live="polite"></p>
+    <footer><span>独立规则演示 · 无模型调用 · 本页修改刷新即清空</span><div><a href="https://github.com/chenyuhuan555/deepseek-recruiting-lab/blob/main/docs/linkedin-hiring-assistant-2-study.md" target="_blank" rel="noopener">研究笔记 ↗</a><a href="https://github.com/chenyuhuan555/deepseek-recruiting-lab/tree/main/examples/scoped-memory" target="_blank" rel="noopener">核心代码 ↗</a></div></footer>
+  </main>
+  <noscript>此交互演示需要启用 JavaScript。你也可以通过页尾的 GitHub 链接阅读研究。</noscript>
+</body>
+</html>
