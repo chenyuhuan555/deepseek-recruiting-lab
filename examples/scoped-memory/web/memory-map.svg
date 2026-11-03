@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 290" fill="none">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" stroke="#d4d9dc" stroke-width=".5"/></pattern>
+    <pattern id="blue-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" stroke="#fff" stroke-opacity=".12" stroke-width=".5"/></pattern>
+  </defs>
+  <path fill="#eeece5" d="M0 0h560v290H0z"/><path fill="url(#grid)" d="M0 0h560v290H0z"/>
+  <g stroke="#9da5a9"><path d="M14 24h20m-10-10v20M526 266h20m-10-10v20"/><circle cx="476" cy="46" r="21"/><circle cx="476" cy="46" r="30" stroke-dasharray="2 4"/></g>
+  <path d="M168 84h89v119h112" stroke="#2456df" stroke-width="2"/>
+  <path d="M164 200h119V92h78" stroke="#777d82" stroke-width="1.5" stroke-dasharray="4 5"/>
+  <circle cx="257" cy="142" r="6" fill="#2456df" stroke="#eeece5" stroke-width="4"/>
+  <g transform="translate(47 38) rotate(-5 70 85)">
+    <path d="M7 9h124v164H7z" fill="#d8d8d1" stroke="#969a94"/>
+    <path d="M0 0h124v164H0z" fill="#fbfaf5" stroke="#25282a"/>
+    <path d="M0 0h124v27H0z" fill="#25282a"/>
+    <text x="11" y="18" fill="#fbfaf5" font-family="monospace" font-size="10" letter-spacing="1">01 / REVISION</text>
+    <text x="12" y="58" fill="#25282a" font-family="sans-serif" font-size="17" font-weight="700">岗位变更</text>
+    <path d="M12 77h98M12 89h74M12 101h89" stroke="#b9bcb6"/>
+    <path d="M12 120h70v23H12z" fill="#e9edfa"/>
+    <text x="18" y="135" fill="#2456df" font-family="sans-serif" font-size="10">保留每次修改</text>
+  </g>
+  <g transform="translate(320 52) rotate(4 92 68)">
+    <path d="M0 0h70l13 12h111v125H0z" fill="#2456df"/>
+    <path d="M0 0h70l13 12h111v125H0z" fill="url(#blue-grid)"/>
+    <text x="17" y="38" fill="#fff" font-family="monospace" font-size="10" letter-spacing="1">02 / SCOPE</text>
+    <text x="17" y="67" fill="#fff" font-family="sans-serif" font-size="19" font-weight="700">记忆有边界</text>
+    <path d="M17 83h154" stroke="#fff" stroke-opacity=".35"/>
+    <text x="17" y="105" fill="#fff" font-family="sans-serif" font-size="11">客户 · 岗位 · 顾问</text>
+  </g>
+  <g transform="translate(298 188) rotate(-3 90 34)">
+    <path d="M0 0h214v64H0z" fill="#fbfaf5" stroke="#25282a"/>
+    <path d="M0 0h45v64H0z" fill="#25282a"/>
+    <path d="m13 32 7 7 13-15" stroke="#fff" stroke-width="2"/>
+    <text x="58" y="22" fill="#6a7073" font-family="monospace" font-size="9" letter-spacing="1">03 / EVIDENCE</text>
+    <text x="58" y="45" fill="#25282a" font-family="sans-serif" font-size="15" font-weight="700">每次判断，回到原文</text>
+  </g>
+  <text x="43" y="251" fill="#697174" font-family="monospace" font-size="9" letter-spacing="1">TRACE / FILTER / REVIEW</text>
+  <path d="M43 262h142" stroke="#9da5a9"/>
+</svg>

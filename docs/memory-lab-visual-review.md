@@ -1,0 +1,35 @@
+# 招聘记忆实验室：编辑式工作台改版
+
+日期：2026-11-03
+
+## 依据
+
+重新读取 [网页设计学习笔记](https://github.com/chenyuhuan555/web-design-notes) 中的 [例图拆解](https://github.com/chenyuhuan555/web-design-notes/blob/main/studies/001-reference-visual-language.md)、[视觉基线复盘](https://github.com/chenyuhuan555/web-design-notes/blob/main/reviews/001-headhunter-lab-baseline.md) 和 [检查清单](https://github.com/chenyuhuan555/web-design-notes/blob/main/principles/visual-review.md)。参考入口为 [Azivor / Reference](https://azivor.github.io/reference/)。
+
+迁移构图、尺度和信息层次，没有复制参考品牌的图片、商标或界面。关系图为本项目原创 SVG。
+
+## 问题与取舍
+
+- 原先浅灰绿背景、白色边框面板和小标签反复出现，内容权重被拉平。
+- 首屏改为有明确断行的中文标题和原创档案关系图，表达版本、范围与来源。
+- 暖纸白、墨黑、电蓝成为统一规则；编辑区、档案区和历史记录采用不同密度，减少重复容器。
+- 不引入整页深色海报、照片、外部字体、动画或依赖。网格仅留在主视觉，表单保持干净。
+- 小屏压缩展示区，保留项目切换和全部操作入口。虚构数据和能力边界继续显示。
+
+## 实施与验收
+
+1. 修改 `index.html`，新增 `memory-map.svg`，调整 `style.css`。
+2. 保持规则、案例和交互实现不变。
+3. 保存 1440px 桌面与 390px 手机同尺寸前后截图，检查 320px 至 1440px 的溢出、断行与焦点。
+4. 实际走通岗位保存、旧版本冲突、范围过滤及证据复核，再同步代码与部署。
+
+已完成验证：
+
+- 保存了 1440px 桌面和 390px 手机的同尺寸前后完整截图，以及桌面首屏截图。
+- 三页均检查 320、390、768、1024、1440px；15 组检查中页面宽度均未超过可视宽度。
+- 浏览器控制台未见页面错误或警告；键盘从项目选择进入重置按钮时焦点轮廓可见。
+- 实际走通新增条件与旧条件保留、旧版本草稿拒绝覆盖、切换客户后的记忆排除、人工复核记录。
+- 8 项 JavaScript 规则测试与 10 项原有 Python 测试通过。没有修改 `app.mjs`、`rules.mjs` 或业务数据。
+- 手机收起缩小后难以辨认的关系图，保留完整的标题、项目入口和操作界面。
+
+这些检查验证可用性和实现状态，不代表用户已认可视觉效果；暂不填写美观度分数或效率提升数字。
