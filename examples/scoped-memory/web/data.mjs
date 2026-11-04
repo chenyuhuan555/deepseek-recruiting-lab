@@ -2,10 +2,11 @@ const criteria = [
   { id: 'b2b', text: '具备 B 端产品经验', kind: 'required', quote: '需要有 B 端产品经验' },
   { id: 'rag', text: '参与过 RAG 应用', kind: 'preferred', quote: '做过 RAG 应用更好' },
   { id: 'hr', text: '熟悉招聘业务流程', kind: 'required', quote: '需要熟悉招聘业务流程' },
+  { id: 'city', text: '工作地点为上海', kind: 'required', quote: '工作地点为上海' },
 ];
 export const projects = [
-  { id: 'job-a', clientId: 'client-a', client: '禾序 · HR SaaS', title: 'AI 产品经理', source: '需要有 B 端产品经验，需要熟悉招聘业务流程，做过 RAG 应用更好。', version: 1, criteria: structuredClone(criteria), history: [] },
-  { id: 'job-b', clientId: 'client-b', client: '向野 · 猎头平台', title: '招聘产品经理', source: '需要有 B 端产品经验，需要熟悉招聘业务流程，做过 RAG 应用更好。', version: 1, criteria: structuredClone(criteria), history: [] },
+  { id: 'job-a', clientId: 'client-a', client: '禾序 · HR SaaS', title: 'AI 产品经理', source: '需要有 B 端产品经验，需要熟悉招聘业务流程，做过 RAG 应用更好。工作地点为上海。', version: 1, criteria: structuredClone(criteria), history: [] },
+  { id: 'job-b', clientId: 'client-b', client: '向野 · 猎头平台', title: '招聘产品经理', source: '需要有 B 端产品经验，需要熟悉招聘业务流程，做过 RAG 应用更好。工作地点为上海。', version: 1, criteria: structuredClone(criteria), history: [] },
 ];
 export const memories = [
   { id: 'm1', text: '优先了解中大型企业客户的交付经历。', scope: 'client', ownerId: 'client-a', owner: '禾序', confirmedBy: '顾问林', expiresOn: '2027-01-31', source: '虚构客户沟通纪要 · 2026-11-01' },

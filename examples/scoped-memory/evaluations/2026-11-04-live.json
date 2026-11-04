@@ -1,0 +1,263 @@
+{
+  "runAt": "2026-11-04T07:37:06.932Z",
+  "model": "deepseek-flash",
+  "total": 10,
+  "passed": 10,
+  "scope": "10 synthetic feedback cases; not production accuracy or time saved",
+  "results": [
+    {
+      "id": "mixed-ambiguity",
+      "sourceText": "RAG不用卡死，但必须主导过产品上线，城市可以放宽。",
+      "expected": "只新增必要的上线经历；保留B端和RAG原分类；城市待确认。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "add",
+            "id": "addition-1",
+            "text": "必须主导过产品上线",
+            "kind": "required",
+            "quote": "但必须主导过产品上线"
+          }
+        ],
+        "questions": [
+          {
+            "text": "城市可以放宽到哪些城市？是否接受异地搬迁或远程？",
+            "quote": "城市可以放宽",
+            "criterionId": "city"
+          }
+        ],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 1183,
+          "inputTokens": 743,
+          "outputTokens": 67
+        }
+      }
+    },
+    {
+      "id": "rag-required",
+      "sourceText": "RAG改为必须具备的经验。",
+      "expected": "只把rag改为required。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "update",
+            "id": "rag",
+            "text": "参与过RAG应用",
+            "kind": "required",
+            "quote": "RAG改为必须具备的经验。"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 870,
+          "inputTokens": 732,
+          "outputTokens": 38
+        }
+      }
+    },
+    {
+      "id": "explicit-removal",
+      "sourceText": "明确取消RAG应用经历要求，其他条件不变。",
+      "expected": "只取消rag。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "remove",
+            "id": "rag",
+            "text": "参与过RAG应用",
+            "kind": "preferred",
+            "quote": "明确取消RAG应用经历要求"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 1088,
+          "inputTokens": 738,
+          "outputTokens": 41
+        }
+      }
+    },
+    {
+      "id": "b2b-preferred",
+      "sourceText": "B端产品经验不是必须，改为加分项。",
+      "expected": "只把b2b改为preferred。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "update",
+            "id": "b2b",
+            "text": "B端产品经验",
+            "kind": "preferred",
+            "quote": "B端产品经验不是必须，改为加分项。"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 911,
+          "inputTokens": 737,
+          "outputTokens": 45
+        }
+      }
+    },
+    {
+      "id": "explicit-cities",
+      "sourceText": "工作城市改为上海或杭州。",
+      "expected": "只更新city，包含上海和杭州。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "update",
+            "id": "city",
+            "text": "工作地点为上海或杭州",
+            "kind": "required",
+            "quote": "工作城市改为上海或杭州"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 718,
+          "inputTokens": 733,
+          "outputTokens": 39
+        }
+      }
+    },
+    {
+      "id": "salary-unclear",
+      "sourceText": "薪资可以谈，先放宽一点。",
+      "expected": "不改薪资，提出salary澄清问题。",
+      "pass": true,
+      "output": {
+        "changes": [],
+        "questions": [
+          {
+            "text": "薪资“可以谈、先放宽一点”的具体上限是多少？是否仍保留年薪50万元以内的硬性要求？",
+            "quote": "薪资可以谈，先放宽一点。",
+            "criterionId": "salary"
+          }
+        ],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 973,
+          "inputTokens": 734,
+          "outputTokens": 54
+        }
+      }
+    },
+    {
+      "id": "new-years",
+      "sourceText": "新增一个硬性要求：至少5年产品经验，其他要求不变。",
+      "expected": "只新增至少5年经验为required。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "add",
+            "id": "addition-1",
+            "text": "至少5年产品经验",
+            "kind": "required",
+            "quote": "新增一个硬性要求：至少5年产品经验"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 775,
+          "inputTokens": 742,
+          "outputTokens": 42
+        }
+      }
+    },
+    {
+      "id": "no-change",
+      "sourceText": "先不改岗位要求，等我确认后再说。",
+      "expected": "没有条件变更。",
+      "pass": true,
+      "output": {
+        "changes": [],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 823,
+          "inputTokens": 736,
+          "outputTokens": 9
+        }
+      }
+    },
+    {
+      "id": "education-soft",
+      "sourceText": "本科最好有，但不是必须。",
+      "expected": "只新增学历加分项。",
+      "pass": true,
+      "output": {
+        "changes": [
+          {
+            "operation": "add",
+            "id": "addition-1",
+            "text": "本科学历",
+            "kind": "preferred",
+            "quote": "本科最好有，但不是必须。"
+          }
+        ],
+        "questions": [],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 967,
+          "inputTokens": 733,
+          "outputTokens": 37
+        }
+      }
+    },
+    {
+      "id": "conflicting-feedback",
+      "sourceText": "RAG必须具备，但同时RAG不能作为必要条件。",
+      "expected": "不改rag，提出冲突澄清问题。",
+      "pass": true,
+      "output": {
+        "changes": [],
+        "questions": [
+          {
+            "text": "RAG目前是加分项；本次反馈同时说“必须具备”和“不能作为必要条件”，请确认RAG应设为必要条件、加分项，还是不作要求？",
+            "quote": "RAG必须具备，但同时RAG不能作为必要条件。",
+            "criterionId": "rag"
+          }
+        ],
+        "jobId": "eval-job",
+        "baseVersion": 1,
+        "model": "deepseek-flash",
+        "metrics": {
+          "generationMs": 1026,
+          "inputTokens": 737,
+          "outputTokens": 68
+        }
+      }
+    }
+  ]
+}

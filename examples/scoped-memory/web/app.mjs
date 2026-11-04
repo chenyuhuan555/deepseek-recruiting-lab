@@ -1,13 +1,16 @@
 import { applyChange, memoryDisposition, reviewState } from './rules.mjs';
-import { projects, memories, evidence, kindLabels, reviewLabels } from './data.mjs';
+import { projects, memories, evidence, kindLabels, reviewLabels } from './data.mjs?v=6';
+import { escape, defaultFeedback, generatedView, collectDraft, questionList } from './draft-ui.mjs?v=6';
+import { patchFromDraft } from './draft-domain.mjs?v=6';
 
 const $ = selector => document.querySelector(selector);
-const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const names = { r1: '顾问林', r2: '顾问周' };
 let jobs = structuredClone(projects), projectId = 'job-a', tab = 'revision', recruiter = 'r1';
 const localDate = new Date();
 const initialDate = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
 let today = initialDate, draft = null, formValues = null, reviews = {};
+let generation = null;
+const feedbacks = new Map();
 const currentJob = () => jobs.find(job => job.id === projectId);
 const defaultForm = () => ({ sourceText: '必须主导过产品上线，原来其他条件不变。', target: 'launch', text: '主导过产品上线', kind: 'required', quote: '必须主导过产品上线', action: 'update' });
 const notice = (text, error = false) => { $('#notice').textContent = text; $('#notice').classList.toggle('error', error); };
@@ -20,16 +23,19 @@ function formField(label, name, value, extra = '') {
 }
 function revisionView(job) {
   const v = formValues || defaultForm();
-  return `<div class="grid"><section class="panel"><div class="panel-head"><h2>岗位条件</h2></div><div class="panel-body"><div class="presets"><button class="preset" data-preset="add">增加上线经历</button><button class="preset" data-preset="soften">B 端改为加分项</button><button class="preset" data-preset="remove">取消 RAG 条件</button></div>
+  return `<div class="grid"><section class="panel"><div class="panel-head"><h2>客户反馈</h2></div><div class="panel-body">
+  <form id="feedback-form"><div class="field"><label for="feedbackText">客户原话</label><textarea id="feedbackText" name="feedbackText" required maxlength="3000">${escape(feedbacks.get(job.id) ?? defaultFeedback)}</textarea></div><button class="primary" id="generate" type="submit" ${generation ? 'disabled' : ''}>${generation ? '生成中…' : '生成草稿'}</button></form>
+  <details class="manual-edit"><summary>手动修改</summary><div class="presets"><button class="preset" data-preset="add">增加上线经历</button><button class="preset" data-preset="soften">B 端改为加分项</button><button class="preset" data-preset="remove">取消 RAG 条件</button></div>
   <form id="patch-form"><div class="field"><label for="sourceText">客户原话</label><textarea name="sourceText" id="sourceText" required maxlength="3000">${escape(v.sourceText)}</textarea></div>
   <div class="two-fields"><div class="field"><label for="target">条件</label><select id="target" name="target" class="control">${[...new Map([...projects.find(p => p.id === job.id).criteria.map(i => [i.id, i.text]), ...job.criteria.map(i => [i.id, i.text]), ['launch', '上线经历（新增 / 修改）']])].map(([id, text]) => `<option value="${id}" ${id === v.target ? 'selected' : ''}>${escape(text)}</option>`).join('')}</select></div><div class="field"><label for="action">操作</label><select id="action" name="action" class="control"><option value="update" ${v.action === 'update' ? 'selected' : ''}>新增 / 替换</option><option value="remove" ${v.action === 'remove' ? 'selected' : ''}>明确取消</option></select></div></div>
   ${formField('条件内容', 'text', v.text, 'maxlength="300"')}<div class="two-fields"><div class="field"><label for="kind">分类</label><select id="kind" name="kind" class="control">${Object.entries(kindLabels).map(([key, text]) => `<option value="${key}" ${v.kind === key ? 'selected' : ''}>${text}</option>`).join('')}</select></div>${formField('原文摘录', 'quote', v.quote, 'maxlength="1000"')}</div>
-  <div class="action-row"><button class="primary" type="submit">查看变更</button></div></form>
+  <div class="action-row"><button class="primary" type="submit">查看变更</button></div></form></details>
   <div id="proposal">${draft ? proposalView(job) : ''}</div></div></section>
-  <aside><section class="panel"><div class="panel-head"><h2>岗位档案</h2><span class="counter">v${job.version} · ${job.criteria.length} 条</span></div><div class="panel-body">${criteriaList(job.criteria)}</div></section>
+  <aside><section class="panel"><div class="panel-head"><h2>岗位档案</h2><span class="counter">v${job.version} · ${job.criteria.length} 条</span></div><div class="panel-body">${criteriaList(job.criteria)}${questionList(job.questions)}</div></section>
   <section class="panel subsection"><div class="panel-head"><h2>版本记录</h2><span class="counter">${job.history.length + 1} 个版本</span></div><div class="panel-body timeline">${[...job.history].reverse().map(item => `<div class="history-item"><strong>v${item.fromVersion + 1} · ${escape(item.confirmedBy)} 确认</strong><p>${escape(item.sourceText)}</p><details><summary>查看修改前 v${item.fromVersion} 的条件</summary>${criteriaList(item.previousCriteria)}</details></div>`).join('')}<div class="history-item"><strong>v1 · 初始需求</strong><p>${escape(job.source)}</p></div></div></section></aside></div>`;
 }
 function proposalView(job) {
+  if (draft.kind === 'generated') return generatedView(draft, job);
   const previous = job.criteria.find(i => i.id === draft.target);
   const action = draft.patch.removeIds.length ? '取消' : previous ? '替换' : '新增';
   return `<section class="proposal"><h3>变更预览 <small>v${draft.patch.expectedVersion}</small></h3><div class="diff-line"><span>${action}</span>${escape(draft.patch.removeIds.length ? previous?.text || draft.target : draft.patch.updates[0].text)}${draft.patch.updates.length ? ' · ' + kindLabels[draft.patch.updates[0].kind] : ''}</div><label class="check"><input type="checkbox" id="reviewed">确认变更</label><div class="action-row"><button id="commit" class="primary" disabled>保存</button><button class="link-button" id="conflict">模拟版本冲突</button></div></section>`;
@@ -60,6 +66,7 @@ function render() {
   $('#workspace').innerHTML = tab === 'revision' ? revisionView(job) : tab === 'memory' ? memoryView(job) : evidenceView(job);
 }
 function preview(form) {
+  cancelGeneration();
   formValues = Object.fromEntries(new FormData(form));
   const v = formValues;
   const patch = { expectedVersion: currentJob().version, sourceText: v.sourceText, confirmedBy: names[recruiter], updates: v.action === 'remove' ? [] : [{ id: v.target, text: v.text, kind: v.kind, quote: v.quote }], removeIds: v.action === 'remove' ? [v.target] : [] };
@@ -68,16 +75,56 @@ function preview(form) {
 }
 function saveDraft() {
   if (!draft || !$('#reviewed')?.checked) return;
-  try { const next = applyChange(currentJob(), draft.patch); jobs = jobs.map(j => j.id === next.id ? next : j); draft = null; render(); notice(`已保存 v${next.version}`); }
+  try {
+    const job = currentJob();
+    if (job.version !== draft.patch.expectedVersion) throw new Error('岗位版本已变化，请重新生成草稿');
+    let patch = draft.patch, questions = [];
+    if (draft.kind === 'generated') {
+      const edited = collectDraft($('#proposal'), draft, job);
+      if (!edited.changes.length && !edited.questions.length) throw new Error('没有待保存的变更');
+      patch = patchFromDraft(edited, { job, sourceText: draft.sourceText, confirmedBy: names[recruiter] });
+      questions = edited.questions;
+    }
+    const next = applyChange(job, patch);
+    const changed = new Set([...patch.updates.map(c => c.id), ...patch.removeIds]);
+    const remaining = (job.questions || []).filter(q => !changed.has(q.criterionId));
+    next.questions = [...new Map([...remaining, ...questions].map(q => [q.text + q.quote, q])).values()];
+    jobs = jobs.map(j => j.id === next.id ? next : j); draft = null; render(); notice(`已保存 v${next.version}`);
+  }
   catch (error) { notice(error.message, true); }
 }
 function preset(name) {
+  cancelGeneration();
   formValues = name === 'add' ? defaultForm() : name === 'soften' ? { sourceText: 'B 端产品经验改为加分项，其他要求不变。', target: 'b2b', text: '具备 B 端产品经验', kind: 'preferred', quote: 'B 端产品经验改为加分项', action: 'update' } : { sourceText: '这次取消 RAG 应用经历要求，其他条件不变。', target: 'rag', text: '参与过 RAG 应用', kind: 'preferred', quote: '取消 RAG 应用经历要求', action: 'remove' };
-  draft = null; render(); notice('');
+  draft = null; render(); $('#patch-form')?.closest('details')?.setAttribute('open', ''); notice('');
+}
+
+function cancelGeneration() {
+  generation?.controller.abort(); generation = null;
+}
+async function generate() {
+  if (generation) return;
+  const sourceText = $('#feedbackText').value.trim();
+  if (!sourceText) { notice('请填写客户反馈', true); return; }
+  const job = structuredClone(currentJob());
+  feedbacks.set(job.id, sourceText); draft = null;
+  const pending = { controller: new AbortController() }; generation = pending; render(); notice('');
+  const timeout = setTimeout(() => pending.controller.abort('timeout'), 65000);
+  try {
+    const response = await fetch('/api/draft', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job: { id: job.id, version: job.version, criteria: job.criteria }, sourceText }), signal: pending.controller.signal });
+    if (!(response.headers.get('content-type') || '').includes('application/json')) throw new Error('服务不可用，请重新登录');
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || '生成失败，请重试');
+    if (generation !== pending) return;
+    if (currentJob().id !== job.id || currentJob().version !== job.version || result.jobId !== job.id || result.baseVersion !== job.version) throw new Error('岗位已变化，请重新生成');
+    draft = { ...result, kind: 'generated', sourceText, patch: patchFromDraft(result, { job, sourceText, confirmedBy: names[recruiter] }) };
+  } catch (error) {
+    if (generation === pending) notice(pending.controller.signal.aborted ? '生成超时，请重试' : error.message, true);
+  } finally { clearTimeout(timeout); if (generation === pending) { generation = null; render(); } }
 }
 document.addEventListener('click', event => {
   const button = event.target.closest('button'); if (!button) return;
-  if (button.dataset.tab) { tab = button.dataset.tab; render(); notice(''); }
+  if (button.dataset.tab) { cancelGeneration(); tab = button.dataset.tab; render(); notice(''); }
   if (button.dataset.preset) preset(button.dataset.preset);
   if (button.id === 'commit') saveDraft();
   if (button.id === 'conflict' && draft) {
@@ -85,21 +132,33 @@ document.addEventListener('click', event => {
     const next = applyChange(job, { expectedVersion: job.version, sourceText, confirmedBy: '另一位顾问（模拟）', updates: [{ id: 'city', text: '工作地点为上海', kind: 'required', quote: '工作地点为上海' }], removeIds: [] });
     jobs = jobs.map(j => j.id === next.id ? next : j); render(); notice(`当前 v${next.version} · 草稿 v${draft.patch.expectedVersion}`);
   }
-  if (button.id === 'reset') { jobs = structuredClone(projects); reviews = {}; draft = null; formValues = null; recruiter = 'r1'; today = initialDate; projectId = 'job-a'; $('#project').value = projectId; render(); notice('已重置'); }
+  if (button.id === 'reset') { cancelGeneration(); feedbacks.clear(); jobs = structuredClone(projects); reviews = {}; draft = null; formValues = null; recruiter = 'r1'; today = initialDate; projectId = 'job-a'; $('#project').value = projectId; render(); notice('已重置'); }
 });
 document.addEventListener('submit', event => {
   event.preventDefault(); const form = event.target;
   if (form.id === 'patch-form') preview(form);
+  if (form.id === 'feedback-form') generate();
   if (form.dataset.review) { const job = currentJob(); const status = new FormData(form).get('status'); if (!['supported', 'unsupported', 'insufficient'].includes(status)) return; reviews[`${job.id}:${form.dataset.review}`] = { jobId: job.id, version: job.version, status, by: names[recruiter] }; render(); notice('已记录'); }
 });
 document.addEventListener('change', event => {
   const el = event.target;
-  if (el.id === 'project') { projectId = el.value; draft = null; formValues = null; render(); notice(''); }
+  if (el.id === 'project') { cancelGeneration(); projectId = el.value; draft = null; formValues = null; render(); notice(''); }
   if (el.id === 'recruiter') { recruiter = el.value; draft = null; render(); notice(''); }
   if (el.id === 'date') { if (!el.value || !el.validity.valid) { el.value = today; notice('日期无效', true); } else { today = el.value; render(); notice(''); } }
   if (el.id === 'reviewed') $('#commit').disabled = !el.checked;
 });
 document.addEventListener('input', event => {
+  if (event.target.closest('#patch-form')) {
+    formValues = Object.fromEntries(new FormData($('#patch-form')));
+    cancelGeneration();
+    const button = $('#generate'); if (button) { button.disabled = false; button.textContent = '生成草稿'; }
+  }
+  if (event.target.id === 'feedbackText') {
+    feedbacks.set(projectId, event.target.value); cancelGeneration();
+    if (draft) { draft = null; $('#proposal').innerHTML = ''; }
+    const button = $('#generate'); if (button) { button.disabled = false; button.textContent = '生成草稿'; }
+  }
+  if (event.target.closest('#proposal') && event.target.id !== 'reviewed' && $('#reviewed')) { $('#reviewed').checked = false; $('#commit').disabled = true; }
   if (event.target.closest('#patch-form') && draft) { draft = null; $('#proposal').innerHTML = ''; notice('请重新预览'); }
 });
 render();
