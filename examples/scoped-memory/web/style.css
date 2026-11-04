@@ -15,8 +15,11 @@ h2 { font-size:19px; font-weight:650; letter-spacing:-.5px; line-height:1.5; }
 h3 { font-size:15px; }
 small { font-size:12px; color:var(--muted); }
 main { max-width:1280px; margin:auto; padding:0 32px; }
-.intro { padding:32px 0 28px; }
-h1 { font-size:32px; letter-spacing:-1px; line-height:1.35; font-weight:700; }
+.intro { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center; gap:64px; padding:40px 0 36px; }
+h1 { font-size:clamp(36px,4.3vw,56px); letter-spacing:-2px; line-height:1.23; font-weight:750; }
+.title-dot { color:var(--accent); margin-left:2px; }
+.memory-map { margin:0; width:100%; max-width:560px; justify-self:end; }
+.memory-map img { display:block; width:100%; height:auto; }
 .contextbar { min-height:76px; padding:16px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .project-select { display:flex; gap:16px; align-items:center; min-width:0; }
 .project-select label { display:block; font-size:10px; color:var(--muted); margin-bottom:3px; }
@@ -123,15 +126,15 @@ footer a:hover { color:var(--accent); text-decoration:underline; }
 @media(max-width:760px) {
   main { padding-left:24px; padding-right:24px; }
   .brand-sub,.brand-divider { display:none; }
-  .intro { padding:28px 0 24px; }
+  .intro { gap:24px; padding:28px 0; }
   .grid,.evidence-grid { grid-template-columns:1fr; }
   .grid { gap:28px; }
   .grid > aside { padding-top:0; }
 }
 @media(max-width:520px) {
   main { padding-left:20px; padding-right:20px; }
-  .intro { padding:24px 0; }
-  h1 { font-size:27px; }
+  .intro { grid-template-columns:1fr; gap:24px; padding:28px 0; }
+  h1 { font-size:40px; letter-spacing:-1.5px; }
   .contextbar { gap:8px; padding:14px 0; }
   .project-select select { font-size:12px; max-width:180px; }
   .project-select label { font-size:9px; }
@@ -159,7 +162,7 @@ footer a:hover { color:var(--accent); text-decoration:underline; }
 }
 @media(max-width:360px) {
   main { padding-left:16px; padding-right:16px; }
-  h1 { font-size:25px; }
+  h1 { font-size:36px; }
   .context-meta { gap:5px; }
   .context-meta > span { font-size:9px; }
   .project-select select { max-width:160px; font-size:11px; }
