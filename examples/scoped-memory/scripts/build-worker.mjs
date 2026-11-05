@@ -12,6 +12,7 @@ for (const [file, type] of [['index.html', 'text/html; charset=utf-8'], ['style.
   assets['/' + file] = { type, content: await readFile(new URL('web/' + file, root), 'utf8') };
 }
 assets['/'] = assets['/index.html'];
+assets['/tasks-ui.mjs'] = { type: 'text/javascript; charset=utf-8', content: await readFile(new URL('web/tasks-ui.mjs', root), 'utf8') };
 assets['/draft-domain.mjs'] = { type: 'text/javascript; charset=utf-8', content: await readFile(new URL('server/draft-domain.mjs', root), 'utf8') };
 await mkdir(new URL('worker/', root), { recursive: true });
 await writeFile(new URL('worker/assets.generated.mjs', root), 'export default ' + JSON.stringify(assets) + ';\n');

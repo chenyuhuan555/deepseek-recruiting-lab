@@ -3,17 +3,22 @@ import { readFile } from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { handleDraft } from './api.mjs';
+import { handleWorkspace } from './workspace-api.mjs';
+import { openLocalDb } from './local-db.mjs';
+import { resolve } from 'node:path';
 
 const port = Number(process.env.MEMORY_LAB_PORT || 4392);
+const db = await openLocalDb(resolve(process.env.MEMORY_LAB_DATA_DIR || 'data', 'workspace.sqlite'));
 const files = { '/': ['../web/index.html', 'text/html; charset=utf-8'], '/index.html': ['../web/index.html', 'text/html; charset=utf-8'], '/app.mjs': ['../web/app.mjs', 'text/javascript; charset=utf-8'], '/rules.mjs': ['../web/rules.mjs', 'text/javascript; charset=utf-8'], '/data.mjs': ['../web/data.mjs', 'text/javascript; charset=utf-8'], '/draft-ui.mjs': ['../web/draft-ui.mjs', 'text/javascript; charset=utf-8'], '/draft-domain.mjs': ['./draft-domain.mjs', 'text/javascript; charset=utf-8'], '/style.css': ['../web/style.css', 'text/css; charset=utf-8'], '/memory-map.svg': ['../web/memory-map.svg', 'image/svg+xml'] };
+files['/tasks-ui.mjs'] = ['../web/tasks-ui.mjs', 'text/javascript; charset=utf-8'];
 createServer(async (req, res) => {
   try {
     if (![`127.0.0.1:${port}`, `localhost:${port}`].includes(req.headers.host)) { res.writeHead(403); res.end(); return; }
     const url = new URL(req.url, `http://127.0.0.1:${port}`);
-    if (url.pathname === '/api/draft') {
+    if (url.pathname.startsWith('/api/')) {
       const headers = new Headers(req.headers); headers.set('oai-authenticated-user-id', 'local-owner');
       const request = new Request(url, { method: req.method, headers, ...(req.method !== 'GET' && req.method !== 'HEAD' ? { body: Readable.toWeb(req), duplex: 'half' } : {}) });
-      const result = await handleDraft(request, process.env);
+      const result = url.pathname === '/api/draft' ? await handleDraft(request, process.env) : await handleWorkspace(request, { DB: db });
       res.writeHead(result.status, Object.fromEntries(result.headers)); res.end(Buffer.from(await result.arrayBuffer())); return;
     }
     if (!['GET', 'HEAD'].includes(req.method) || !files[url.pathname]) { res.writeHead(404); res.end(); return; }

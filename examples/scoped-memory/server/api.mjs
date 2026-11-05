@@ -3,7 +3,7 @@ import { generateDraft, ModelError } from './model.mjs';
 
 const slots = new Map();
 const json = (data, status = 200) => Response.json(data, { status, headers: { 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' } });
-async function readBody(request) {
+export async function readBody(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error('请求为空');
   let size = 0; const chunks = [];

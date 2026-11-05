@@ -1,5 +1,5 @@
-import { kindLabels } from './data.mjs?v=6';
-import { validateDraft } from './draft-domain.mjs?v=6';
+import { kindLabels } from './data.mjs?v=8';
+import { validateDraft } from './draft-domain.mjs?v=8';
 
 export const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const operations = { add: '新增', update: '修改', remove: '取消' };
@@ -15,7 +15,7 @@ export function generatedView(draft, job) {
     <label class="quote-label">原文摘录<input data-change-quote aria-label="第${index + 1}项原文" value="${escape(change.quote)}" maxlength="1500"></label></div>`;
   }).join('')}
   ${draft.questions.length ? `<div class="draft-questions"><h3>待确认</h3>${draft.questions.map((question, index) => `<div class="question-row"><input data-question="${index}" aria-label="待确认问题${index + 1}" value="${escape(question.text)}" maxlength="300"><small>原话「${escape(question.quote)}」</small></div>`).join('')}</div>` : ''}
-  <label class="check"><input type="checkbox" id="reviewed">确认变更</label><div class="action-row"><button id="commit" class="primary" disabled>保存</button><button class="link-button" id="conflict">模拟版本冲突</button></div>
+  <label class="check"><input type="checkbox" id="reviewed">确认变更</label><div class="action-row"><button id="commit" class="primary" disabled>保存</button></div>
   <details class="generation-record"><summary>调用记录</summary><p>${escape(draft.model)} · ${(draft.metrics.generationMs / 1000).toFixed(1)} 秒</p><p>输入 ${draft.metrics.inputTokens ?? '—'} / 输出 ${draft.metrics.outputTokens ?? '—'} tokens</p></details></section>`;
 }
 export function collectDraft(root, draft, job) {
